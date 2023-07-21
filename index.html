@@ -22,123 +22,26 @@
 <body>
   <div id="cesiumContainer"></div>
     <script type="module">
+    const viewer = new Cesium.Viewer('cesiumContainer', {
+      imageryProvider: false,
+      baseLayerPicker: false,
+      requestRenderMode: true,
+    });
 
-      const apiKey = "AAPK57cac0cfefe14b4795639cbb1f3f5810YB50rW2EIbXeXbYXmZt_R-Q4oudCsQl_SnKU-D1XifnuTxKGyHZSd0aVTcBGPLl4";
+    const tileset = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
+      url: "https://tile.googleapis.com/v1/3dtiles/root.json?key=AIzaSyD53sYdmU14vyw6Cf0iKjLbj4WgAmT8qVE",
+      showCreditsOnScreen: true,
+    }));
 
-      Cesium.ArcGisMapService.defaultAccessToken = apiKey;
-
-      const cesiumAccessToken = "AAPK57cac0cfefe14b4795639cbb1f3f5810YB50rW2EIbXeXbYXmZt_R-Q4oudCsQl_SnKU-D1XifnuTxKGyHZSd0aVTcBGPLl4";
-      Cesium.Ion.defaultAccessToken = cesiumAccessToken;
-
-      const arcGisImagery = Cesium.ArcGisMapServerImageryProvider.fromBasemapType(Cesium.ArcGisBaseMapType.SATELLITE, {
-        enablePickFeatures:false
-      });
-
-      const viewer = new Cesium.Viewer("cesiumContainer", {
-
-          baseLayer: Cesium.ImageryLayer.fromProviderAsync(arcGisImagery),
-
-          terrain: Cesium.Terrain.fromWorldTerrain(),
-          timeline: false,
-          animation: false,
-          geocoder:false
-
-      });
-
-      viewer.camera.setView({
-          destination: Cesium.Cartesian3.fromDegrees(-122.43305,37.77655,500),
-          orientation: {
-            heading: Cesium.Math.toRadians(60),
-            pitch: Cesium.Math.toRadians(-15.0),
-          }
-      });
-
-      const geoidService = await Cesium.ArcGISTiledElevationTerrainProvider.fromUrl("https://services3.arcgis.com/xDMb8Us7jzsHQ7bn/arcgis/rest/services/buildingtransform/SceneServer");
-
-      const i3sLayer = "https://services3.arcgis.com/xDMb8Us7jzsHQ7bn/arcgis/rest/services/buildingtransform/SceneServer";
-
-      const i3sProvider = await Cesium.I3SDataProvider.fromUrl(i3sLayer, {
-          geoidTiledTerrainProvider: geoidService,
-          token: apiKey
-      })
-
-      viewer.scene.primitives.add(i3sProvider);
-
-      // An entity object which will hold info about the currently selected feature for infobox display
-      const selectedEntity = new Cesium.Entity();
-      // Show metadata in the InfoBox.
-      viewer.screenSpaceEventHandler.setInputAction(function onLeftClick(movement) {
-        // Pick a new feature
-        const pickedFeature = viewer.scene.pick(movement.position);
-        if (!Cesium.defined(pickedFeature)) {
-          return;
-        }
-        const pickedPosition = viewer.scene.pickPosition(movement.position);
-
-        if (
-          Cesium.defined(pickedFeature.content) &&
-          Cesium.defined(pickedFeature.content.tile.i3sNode)
-        ) {
-          const i3sNode = pickedFeature.content.tile.i3sNode;
-
-          i3sNode.loadFields().then(function () {
-            const geometry = i3sNode.geometryData[0];
-            if (pickedPosition) {
-              const location = geometry.getClosestPointIndexOnTriangle(
-                pickedPosition.x,
-                pickedPosition.y,
-                pickedPosition.z
-              );
-              let description = "No attributes";
-              let name;
-              if (location.index !== -1 && geometry.customAttributes.featureIndex) {
-                const featureIndex =
-                  geometry.customAttributes.featureIndex[location.index];
-                if (Object.keys(i3sNode.fields).length > 0) {
-                  description =
-                    '<table class="cesium-infoBox-defaultTable"><tbody>';
-                  for (const fieldName in i3sNode.fields) {
-                    if (i3sNode.fields.hasOwnProperty(fieldName)) {
-                      const field = i3sNode.fields[fieldName];
-                      description += `<tr><th>${field.name}</th><td>`;
-                      description += `${field.values[featureIndex]}</td></tr>`;
-                      console.log(
-                        `${field.name}: ${field.values[featureIndex]}`
-                      );
-                      if (
-                        !Cesium.defined(name) &&
-                        isNameProperty(field.name)
-                      ) {
-                        name = field.values[featureIndex];
-                      }
-                    }
-                  }
-                  description += `</tbody></table>`;
-                }
-              }
-              if (!Cesium.defined(name)) {
-                name = "unknown";
-              }
-              selectedEntity.name = name;
-              selectedEntity.description = description;
-              viewer.selectedEntity = selectedEntity;
-            }
-          });
-        }
-
+    viewer.scene.camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(-0.133622, 51.523937, 250),
+      orientation: {
+        heading: Cesium.Math.toRadians(20),
+        pitch: Cesium.Math.toRadians(-20),
       },
-      Cesium.ScreenSpaceEventType.LEFT_CLICK);
-
-      function isNameProperty(propertyName) {
-        const name = propertyName.toLowerCase();
-        if (
-          name.localeCompare("name") === 0 ||
-          name.localeCompare("objname") === 0
-        ) {
-          return true;
-        }
-        return false;
-      }
+      duration: 0,
+    }); 
+      
     </script>
   </body>
 </html>
