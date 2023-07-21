@@ -1,20 +1,44 @@
-<!DOCTYPE html>
+<!--
+
+To run this demo, you need to replace 'YOUR_API_KEY' with an API key from the ArcGIS Developers dashboard.
+
+Sign up for a free account and get an API key.
+
+https://developers.arcgis.com/documentation/mapping-apis-and-services/get-started/
+
+-->
+
+
 <html lang="en">
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
+  <title>CesiumJS: Add a 3D Object layer (I3S)</title>
   <!-- Include the CesiumJS JavaScript and CSS files -->
-  <script src="https://cesium.com/downloads/cesiumjs/releases/1.107.1/Build/Cesium/Cesium.js"></script>
-  <link href="https://cesium.com/downloads/cesiumjs/releases/1.107.1/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.105/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.105/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <style>
+    html,
+    body {
+
+        margin: 0px;
+        padding: 0px;
+        height: 100%;
+    }
+    #cesiumContainer {
+        height: 100%;
+    }
+  </style>
 </head>
 <body>
+
   <div id="cesiumContainer"></div>
   <script type="module">
-   
+
     const apiKey = "AAPK57cac0cfefe14b4795639cbb1f3f5810YB50rW2EIbXeXbYXmZt_R-Q4oudCsQl_SnKU-D1XifnuTxKGyHZSd0aVTcBGPLl4";
 
     Cesium.ArcGisMapService.defaultAccessToken = apiKey;
 
-    Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2NDAyMTk3Zi03NGFiLTRiZGUtYTgzMi1hMzc4MmM3NTcyOTAiLCJpZCI6MTQ5Mzk5LCJpYXQiOjE2ODk5NDc5MDZ9.hyqOWjXUe3Yf2JBqfu0Kg0amnKtoV9s29M0GoQlu3iY';
+    const cesiumAccessToken = "AAPK57cac0cfefe14b4795639cbb1f3f5810YB50rW2EIbXeXbYXmZt_R-Q4oudCsQl_SnKU-D1XifnuTxKGyHZSd0aVTcBGPLl4";
     Cesium.Ion.defaultAccessToken = cesiumAccessToken;
 
     const arcGisImagery = Cesium.ArcGisMapServerImageryProvider.fromBasemapType(Cesium.ArcGisBaseMapType.SATELLITE, {
@@ -25,6 +49,19 @@
 
         baseLayer: Cesium.ImageryLayer.fromProviderAsync(arcGisImagery),
 
+        terrain: Cesium.Terrain.fromWorldTerrain(),
+        timeline: false,
+        animation: false,
+        geocoder:false
+
+    });
+
+    viewer.camera.setView({
+      destination: Cesium.Cartesian3.fromDegrees(-122.43305,37.77655,500),
+      orientation: {
+        heading: Cesium.Math.toRadians(60),
+        pitch: Cesium.Math.toRadians(-15.0),
+      }
     });
 
     // Initialize a terrain provider which provides geoid conversion between gravity related (typically I3S datasets) and ellipsoidal based
@@ -41,7 +78,8 @@
     })
 
     viewer.scene.primitives.add(i3sProvider);
+
   </script>
- </div>
-</body>
+
+  </body>
 </html>
