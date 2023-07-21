@@ -15,18 +15,11 @@
     Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2NDAyMTk3Zi03NGFiLTRiZGUtYTgzMi1hMzc4MmM3NTcyOTAiLCJpZCI6MTQ5Mzk5LCJpYXQiOjE2ODk5NDc5MDZ9.hyqOWjXUe3Yf2JBqfu0Kg0amnKtoV9s29M0GoQlu3iY';
 
     // Initialize the Cesium Viewer in the HTML element with the `cesiumContainer` ID.
-    const viewer = new Cesium.Viewer('cesiumContainer', {
-      imageryProvider: false,
-      baseLayerPicker: false,
-      requestRenderMode: true,
+    const viewer = new Cesium.Viewer("cesiumContainer", {
+    terrain: Cesium.Terrain.fromWorldTerrain(),
     });
-    
-    // Initialize the Photorealistic 3D Tiles
-    const tileset = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
-      url: "https://tile.googleapis.com/v1/3dtiles/root.json?key=AIzaSyD53sYdmU14vyw6Cf0iKjLbj4WgAmT8qVE",
-      showCreditsOnScreen: true,
-    });    
 
+    
     // Fly the camera to San Francisco at the given longitude, latitude, and height.
     viewer.camera.flyTo({
       destination: Cesium.Cartesian3.fromDegrees(-0.133689, 51.524383, 100),
