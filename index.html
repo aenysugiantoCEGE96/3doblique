@@ -42,7 +42,20 @@
           pitch : Cesium.Math.toRadians(-70.0),
         }
       });
+    // Initialize a terrain provider which provides geoid conversion between gravity related (typically I3S datasets) and ellipsoidal based
+    // height systems (Cesium World Terrain).
+    // If this is not specified, or the URL is invalid no geoid conversion will be applied.
+    // The source data used in this transcoding service was compiled from https://earth-info.nga.mil/#tab_wgs84-data and is based on EGM2008 Gravity Model
+    const geoidService = await Cesium.ArcGISTiledElevationTerrainProvider.fromUrl("https://tiles.arcgis.com/tiles/z2tnIkrLQ2BRzr6P/arcgis/rest/services/EGM2008/ImageServer");
 
+    const i3sLayer = "https://tiles.arcgis.com/tiles/z2tnIkrLQ2BRzr6P/arcgis/rest/services/SanFrancisco_3DObjects_1_7/SceneServer";
+
+    const i3sProvider = await Cesium.I3SDataProvider.fromUrl(i3sLayer, {
+        geoidTiledTerrainProvider: geoidService,
+        token: apiKey
+    })
+
+    viewer.scene.primitives.add(i3sProvider);
     </script>
   </body>
 </html>
