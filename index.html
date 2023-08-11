@@ -1,43 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="utf-8" />
-  <title>CesiumJS: Add a 3D Object layer (I3S)</title>
-  <!-- Include the CesiumJS JavaScript and CSS files -->
-  <script src="https://cesium.com/downloads/cesiumjs/releases/1.107/Build/Cesium/Cesium.js"></script>
-  <link href="https://cesium.com/downloads/cesiumjs/releases/1.107/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <title>ArcGIS Web Map Example</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.21/esri/themes/light/main.css">
+  <script src="https://js.arcgis.com/4.21/"></script>
   <style>
-    html,
-    body {
-
-        margin: 0px;
-        padding: 0px;
-        height: 100%;
-    }
-    #cesiumContainer {
-        height: 100%;
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100vh;
+      width: 100%;
     }
   </style>
 </head>
 <body>
-
-  <div id="cesiumContainer"></div>
-  <script type="module">
-
-    const cesiumAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2NDAyMTk3Zi03NGFiLTRiZGUtYTgzMi1hMzc4MmM3NTcyOTAiLCJpZCI6MTQ5Mzk5LCJpYXQiOjE2ODk5NDc5MDZ9.hyqOWjXUe3Yf2JBqfu0Kg0amnKtoV9s29M0GoQlu3iY";
-    Cesium.Ion.defaultAccessToken = cesiumAccessToken;
-    const viewer = new Cesium.Viewer("cesiumContainer", { 
-      terrain: Cesium.Terrain.fromWorldTerrain(),
+  <div id="viewDiv"></div>
+  <script>
+    require([
+      "esri/WebScene",
+      "esri/views/SceneView"
+    ], function(WebScene, SceneView) {
+      var webScene = new WebScene({
+        portalItem: {
+          id: "51a59c65649e41e3a3a80bde64f6dd6f"
+        }
+      });
+      var view = new SceneView({
+        container: "viewDiv",
+        map: webScene
+      });
     });
-
-    try {
-      const tileset = await Cesium.Cesium3DTileset.fromIonAssetId(40866);
-      viewer.scene.primitives.add(tileset);
-      viewer.zoomTo(tileset);
-    } catch (error) {
-      console.log(`Error loading tileset: ${error}`);
-    } 
   </script>
-
-  </body>
+</body>
 </html>
